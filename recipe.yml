@@ -37,8 +37,31 @@ modules:
       - kcm_wacomtablet
       - fcitx5
       - fcitx5-configtool
-      - kcm-fcitx5
       - waydroid
+      # Hardware, Wireless, USB Wi-Fi & System Tools
+      - steam-devices
+      - playerctl
+      - brightnessctl
+      - python3-pyqt6
+      - linux-firmware
+      - realtek-firmware
+      - mediatek-firmware
+      - mt7xxx-firmware
+      - atheros-firmware
+      - brcmfmac-firmware
+      - b43-openfwwf
+      - iwlegacy-firmware
+      - iwlwifi-firmware
+      - zd1211-firmware
+      - libertas-firmware
+      - wireless-regdb
+      - NetworkManager-wifi
+      - wpa_supplicant
+      - wireless-tools
+      - iw
+      - rfkill
+      - usb_modeswitch
+      - usb_modeswitch-data
 
   - type: flatpak
     remotes:

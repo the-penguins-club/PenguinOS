@@ -64,11 +64,30 @@ RUN curl -fsSL -o /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:badshah:openb
 # 6. Install Android App Subsystem (Waydroid)
 RUN rpm-ostree install -y waydroid
 
-# 7. Install KDE Connect & Networking Essentials
+# 7. Install Wireless, USB Wi-Fi Drivers, Firmware & Networking Essentials
 RUN rpm-ostree install -y \
     kde-connect \
     avahi \
-    firewalld
+    firewalld \
+    linux-firmware \
+    realtek-firmware \
+    mediatek-firmware \
+    mt7xxx-firmware \
+    atheros-firmware \
+    brcmfmac-firmware \
+    b43-openfwwf \
+    iwlegacy-firmware \
+    iwlwifi-firmware \
+    zd1211-firmware \
+    libertas-firmware \
+    wireless-regdb \
+    NetworkManager-wifi \
+    wpa_supplicant \
+    wireless-tools \
+    iw \
+    rfkill \
+    usb_modeswitch \
+    usb_modeswitch-data
 
 # 8. Configure Firewall Policies (KDE Connect & Waydroid)
 RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \
@@ -77,11 +96,14 @@ RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \
         firewall-offline-cmd --zone=trusted --add-interface=waydroid0 || true; \
     fi
 
-# 8b. Pre-configure Flathub repository & Steam gamepad udev rules
-RUN mkdir -p /etc/flatpak/remotes.d /usr/lib/udev/rules.d /etc/udev/rules.d && \
+# 8b. Pre-configure Flathub repository, Steam gamepad & USB Wi-Fi udev rules, and kernel modules
+RUN mkdir -p /etc/flatpak/remotes.d /usr/lib/udev/rules.d /etc/udev/rules.d /usr/lib/modules-load.d /etc/modules-load.d && \
     curl -fsSL https://dl.flathub.org/repo/flathub.flatpakrepo -o /etc/flatpak/remotes.d/flathub.flatpakrepo || true
 COPY ./system/udev/*.rules /usr/lib/udev/rules.d/
 COPY ./system/udev/*.rules /etc/udev/rules.d/
+COPY ./system/modules/penguin-wifi.conf /usr/lib/modules-load.d/penguin-wifi.conf
+COPY ./system/modules/penguin-wifi.conf /etc/modules-load.d/penguin-wifi.conf
+
 
 # 9. Install storytold/craft-launcher (Official linux-x86_64 release with complete assets)
 RUN mkdir -p /tmp/craft-launcher && \
