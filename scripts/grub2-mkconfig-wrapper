@@ -1,0 +1,62 @@
+#!/bin/bash
+# PenguinOS safe grub2-mkconfig wrapper
+# Prevents exit code 1 failures when running in OSTree chroot / composefs / container environments
+
+set +e
+
+output_file=""
+prev_opt=""
+for arg in "$@"; do
+  if [ "$prev_opt" = "-o" ]; then
+    output_file="$arg"
+    prev_opt=""
+  elif [[ "$arg" == --output=* ]]; then
+    output_file="${arg#--output=}"
+  elif [ "$arg" = "-o" ]; then
+    prev_opt="-o"
+  fi
+done
+
+# Try running the original grub2-mkconfig if present
+if [ -x /usr/sbin/grub2-mkconfig.real ]; then
+  /usr/sbin/grub2-mkconfig.real "$@"
+  rc=$?
+  if [ $rc -eq 0 ]; then
+    exit 0
+  fi
+  echo "grub2-mkconfig.real exited with code $rc in deployment environment; using static BLS configuration fallback." >&2
+fi
+
+# Fallback: Generate static BLS configuration compatible with OSTree and Fedora Atomic
+bls_config='# Static BLS bootloader configuration for PenguinOS / Fedora Atomic
+set default="0"
+set timeout="5"
+
+if [ -f ${config_directory}/bootuuid.cfg ]; then
+  source ${config_directory}/bootuuid.cfg
+fi
+
+if [ -n "${BOOT_UUID}" ]; then
+  search --fs-uuid "${BOOT_UUID}" --set prefix --no-floppy
+else
+  search --label boot --set prefix --no-floppy
+fi
+
+if [ -f ${config_directory}/grubenv ]; then
+  load_env -f ${config_directory}/grubenv
+elif [ -s $prefix/grubenv ]; then
+  load_env
+fi
+
+insmod blscfg
+blscfg
+'
+
+if [ -n "$output_file" ]; then
+  mkdir -p "$(dirname "$output_file")"
+  echo "$bls_config" > "$output_file"
+  exit 0
+else
+  echo "$bls_config"
+  exit 0
+fi

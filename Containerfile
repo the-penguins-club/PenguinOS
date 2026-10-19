@@ -192,6 +192,25 @@ RUN for d in /usr/share/pixmaps /usr/share/icons /usr/share/plymouth/themes /usr
         done; \
     done
 
+# 13b. Configure Bootloader, GRUB & EFI compatibility for Anaconda / OSTree deployment
+COPY ./system/grub/default-grub /etc/default/grub
+COPY ./system/boot/bootupd-state.json /boot/bootupd-state.json
+COPY ./system/boot/bootupd-state.json /usr/lib/bootupd/bootupd-state.json
+COPY ./scripts/grub2-mkconfig-wrapper /usr/local/bin/grub2-mkconfig-wrapper
+RUN mkdir -p /boot/efi/EFI /etc/default && \
+    ln -sfn fedora /boot/efi/EFI/penguinos && \
+    chmod +x /usr/local/bin/grub2-mkconfig-wrapper && \
+    if [ -f /usr/sbin/grub2-mkconfig ] && [ ! -f /usr/sbin/grub2-mkconfig.real ]; then \
+        mv /usr/sbin/grub2-mkconfig /usr/sbin/grub2-mkconfig.real && \
+        cp /usr/local/bin/grub2-mkconfig-wrapper /usr/sbin/grub2-mkconfig && \
+        chmod +x /usr/sbin/grub2-mkconfig; \
+    fi && \
+    if [ -f /usr/bin/grub2-mkconfig ] && [ ! -f /usr/bin/grub2-mkconfig.real ]; then \
+        mv /usr/bin/grub2-mkconfig /usr/bin/grub2-mkconfig.real && \
+        cp /usr/local/bin/grub2-mkconfig-wrapper /usr/bin/grub2-mkconfig && \
+        chmod +x /usr/bin/grub2-mkconfig; \
+    fi
+
 # 14. Validate image compliance with bootc
 RUN bootc container lint || true
 
