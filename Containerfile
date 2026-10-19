@@ -77,17 +77,18 @@ RUN rpm-ostree install -y \
     brcmfmac-firmware \
     b43-openfwwf \
     iwlegacy-firmware \
-    iwlwifi-firmware \
+    iwlwifi-dvm-firmware \
+    iwlwifi-mvm-firmware \
     zd1211-firmware \
     libertas-firmware \
     wireless-regdb \
     NetworkManager-wifi \
     wpa_supplicant \
-    wireless-tools \
     iw \
     rfkill \
     usb_modeswitch \
     usb_modeswitch-data
+
 
 # 8. Configure Firewall Policies (KDE Connect & Waydroid)
 RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \

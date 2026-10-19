@@ -51,17 +51,18 @@ modules:
       - brcmfmac-firmware
       - b43-openfwwf
       - iwlegacy-firmware
-      - iwlwifi-firmware
+      - iwlwifi-dvm-firmware
+      - iwlwifi-mvm-firmware
       - zd1211-firmware
       - libertas-firmware
       - wireless-regdb
       - NetworkManager-wifi
       - wpa_supplicant
-      - wireless-tools
       - iw
       - rfkill
       - usb_modeswitch
       - usb_modeswitch-data
+
 
   - type: flatpak
     remotes:
