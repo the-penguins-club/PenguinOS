@@ -2,11 +2,18 @@
 FROM quay.io/fedora-ostree-desktops/kinoite:43
 
 # 1. Enable Non-Free & RPM Fusion Repositories (Codecs, Drivers)
-RUN for i in 1 2 3 4 5; do \
-        rpm-ostree install -y \
-            https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && break || sleep 3; \
-    done
+RUN FEDORA_VER=$(rpm -E %fedora) && \
+    (curl -fsSL --retry 5 --retry-connrefused -o /tmp/rf-free.rpm \
+        https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VER}.noarch.rpm || \
+     curl -fsSL --retry 5 --retry-connrefused -o /tmp/rf-free.rpm \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VER}.noarch.rpm) && \
+    (curl -fsSL --retry 5 --retry-connrefused -o /tmp/rf-nonfree.rpm \
+        https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VER}.noarch.rpm || \
+     curl -fsSL --retry 5 --retry-connrefused -o /tmp/rf-nonfree.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VER}.noarch.rpm) && \
+    rpm-ostree install -y /tmp/rf-free.rpm /tmp/rf-nonfree.rpm && \
+    rm -f /tmp/rf-free.rpm /tmp/rf-nonfree.rpm
+
 
 # 2. Install Complete Codecs, Media Stack & Hardware Acceleration
 RUN rpm-ostree override remove \

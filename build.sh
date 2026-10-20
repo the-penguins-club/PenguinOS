@@ -7,9 +7,9 @@ IMAGE_NAME="penguinos:latest"
 echo "==> Building PenguinOS container image: ${IMAGE_NAME}..."
 
 if command -v docker >/dev/null 2>&1; then
-    docker build -t "${IMAGE_NAME}" -f Containerfile .
+    docker build --network=host -t "${IMAGE_NAME}" -f Containerfile .
 elif command -v podman >/dev/null 2>&1; then
-    podman build -t "${IMAGE_NAME}" -f Containerfile .
+    podman build --network=host -t "${IMAGE_NAME}" -f Containerfile .
 else
     echo "Error: Neither docker nor podman was found on the system." >&2
     exit 1
