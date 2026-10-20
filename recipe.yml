@@ -93,3 +93,16 @@ modules:
         destination: /etc/skel
       - source: scripts/penguin-welcome
         destination: /usr/local/bin/penguin-welcome
+      - source: system/modules/penguin-wifi.conf
+        destination: /etc/modules-load.d/penguin-wifi.conf
+      - source: system/udev/40-usb_modeswitch-wifi.rules
+        destination: /etc/udev/rules.d/40-usb_modeswitch-wifi.rules
+      - source: system/udev/60-steam-input.rules
+        destination: /etc/udev/rules.d/60-steam-input.rules
+      - source: system/udev/60-steam-vr.rules
+        destination: /etc/udev/rules.d/60-steam-vr.rules
+      - source: system/grub/default-grub
+        destination: /etc/default/grub
+      - source: system/boot/bootupd-state.json
+        destination: /boot/bootupd-state.json
+

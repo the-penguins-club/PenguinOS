@@ -1,12 +1,26 @@
-# USB Wi-Fi Dongle ZeroCD / Mode Switch Rules for PenguinOS
-# Flips multi-mode USB Wi-Fi adapters from virtual CD-ROM (Windows installer) mode to active Wi-Fi NIC
+# USB Wi-Fi Dongle ZeroCD / Mode Switch & Auto-probe Rules for PenguinOS
+# Flips multi-mode USB Wi-Fi adapters from virtual CD-ROM (Windows installer) storage mode to active Wi-Fi NIC
 
-# Realtek RTL8821CU, RTL8811CU, RTL8822CU, RTL8723DU, RTL8188GU / RTL8188FTV
+# 1. Realtek ZeroCD Virtual CD-ROM Mode Switching (RTL8188GU, RTL8821CU, RTL8811CU, RTL8822CU, RTL8723DU, RTL8188FTV)
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="1a2b", RUN+="/usr/sbin/usb_modeswitch -K -v 0bda -p 1a2b"
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="1a2c", RUN+="/usr/sbin/usb_modeswitch -K -v 0bda -p 1a2c"
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="b711", RUN+="/usr/sbin/usb_modeswitch -K -v 0bda -p b711"
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="f179", RUN+="/usr/sbin/usb_modeswitch -K -v 0bda -p f179"
 
-# MediaTek MT7601U / MT7610U multi-mode adapters
+# 2. MediaTek / Ralink ZeroCD Mode Switching
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0e8d", ATTRS{idProduct}=="7610", RUN+="/usr/sbin/usb_modeswitch -K -v 0e8d -p 7610"
 ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0e8d", ATTRS{idProduct}=="2870", RUN+="/usr/sbin/usb_modeswitch -K -v 0e8d -p 2870"
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="148f", ATTRS{idProduct}=="2870", RUN+="/usr/sbin/usb_modeswitch -K -v 148f -p 2870"
+
+# 3. Post-Modeswitch Automatic Driver Probing
+# Realtek RTL8188GU & RTL8188FTV -> rtl8xxxu
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="b711", RUN+="/sbin/modprobe rtl8xxxu"
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="f179", RUN+="/sbin/modprobe rtl8xxxu"
+
+# Realtek RTL8811CU & RTL8821CU -> rtw88_8821cu
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="c811", RUN+="/sbin/modprobe rtw88_8821cu"
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="c821", RUN+="/sbin/modprobe rtw88_8821cu"
+
+# Realtek RTL8822CU -> rtw88_8822cu
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="c822", RUN+="/sbin/modprobe rtw88_8822cu"
+
+# Realtek RTL8723DU -> rtw88_8723du
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="d723", RUN+="/sbin/modprobe rtw88_8723du"
