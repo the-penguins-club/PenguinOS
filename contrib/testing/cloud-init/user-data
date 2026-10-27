@@ -1,0 +1,13 @@
+#cloud-config
+users:
+  - name: tester
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: "$6$rounds=4096$saltstring$encryptedpasswordhere" # Or set a plain text password for testing
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3Nza... (your public key here, optional)
+chpasswd:
+  list: |
+    tester:password123
+  expire: False
